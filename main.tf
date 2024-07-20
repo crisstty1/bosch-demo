@@ -142,7 +142,7 @@ data "aws_ami" "ubuntu" {
 # Build EC2 instance in Public Subnet
 resource "aws_instance" "server" {
   ami                         = data.aws_ami.ubuntu.id
-  instance_type               = var.instance_type
+  instance_type               = "t2.micro"
   count                       = var.instance_count
   subnet_id                   = aws_subnet.public_subnets["public_subnet_1"].id
   security_groups             = [aws_security_group.vpc-ping.id, aws_security_group.ingress-ssh.id]
@@ -183,9 +183,9 @@ resource "aws_instance" "server" {
 
 # data resource collecting output of ping.sh which is based on input arguments passed with query block
 data "external" "ping" {
-  program = ["/usr/bin/bash", "ping.sh"]
+  program = ["/usr/bin/bash", "test.sh"]
   query = {
-    #nr_instances = var.instance_count
+    nr_instances = var.instance_count
     public_ip_addr_1  = aws_instance.server[0].public_ip
     public_ip_addr_2  = aws_instance.server[1].public_ip
     public_ip_addr_3  = aws_instance.server[2].public_ip
